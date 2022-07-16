@@ -1,0 +1,10 @@
+{application,solis,
+             [{description,"An OTP application"},
+              {vsn,"0.1.0"},
+              {registered,[]},
+              {mod,{solis_app,[]}},
+              {applications,[kernel,stdlib]},
+              {env,[]},
+              {modules,[lamps,solis,solis_app,solis_device,solis_sup,tv]},
+              {licenses,["Apache 2.0"]},
+              {links,[]}]}.
