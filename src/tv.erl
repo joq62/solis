@@ -28,6 +28,7 @@
         ]).
 
 -export([
+	 is_on/0,
 	 tv_on/3,
 	 tv_off/3
 	]).
@@ -153,17 +154,18 @@ format_status(_Opt, [_PDict, State, Data]) ->
 
 %%--------------------------------------------------------------------
 tv_on(cast,{switch_on,"switch_tv"},Data) ->
-    io:format("tv_on: switch_on  do nothing  ~p~n",[{?MODULE,?LINE}]),
+%    io:format("tv_on: switch_on  do nothing  ~p~n",[{?MODULE,?LINE}]),
     {keep_state, Data};
 tv_on(cast,{switch_off,"switch_tv" },Data) ->
-    io:format("tv_on: switch_off  ~p~n",[{?MODULE,?LINE}]),
+    tradfri_control_outlet:set("outlet_switch_tv","off"),
+%    io:format("tv_on: switch_off  ~p~n",[{?MODULE,?LINE}]),
     {next_state, tv_off, Data}.
 
 tv_off(cast,{switch_on,"switch_tv"},Data) ->
-    io:format("tv_off: switch_on -> on ~p~n",[{?MODULE,?LINE}]),
+    tradfri_control_outlet:set("outlet_switch_tv","on"),
     {next_state, tv_on, Data};
 tv_off(cast,{switch_off,"switch_tv" },Data) ->
-    io:format("tv_off: switch_off  do nothing ~p~n",[{?MODULE,?LINE}]),
+ %   io:format("tv_off: switch_off  do nothing ~p~n",[{?MODULE,?LINE}]),
     {keep_state, Data}.
 
 state_name({call, Caller}, _Msg, Data) ->
@@ -238,3 +240,5 @@ code_change(_OldVsn, State, Data, _Extra) ->
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
+is_on()->
+    tradfri_control_outlet:is_on("outlet_switch_tv").

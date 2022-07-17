@@ -29,9 +29,9 @@ start()->
   %  true=lamps:are_on(),
   %  false=lamps:are_off(),
     io:format(" temp = ~p~n",[solis:temp("indoor")]),
-    solis:turn_off("lamps"),
-    timer:sleep(3000),
-    solis:turn_on("lamps"),
+ %   solis:turn_off("lamps"),
+ %   timer:sleep(3000),
+ %   solis:turn_on("lamps"),
 
 %    init:stop(),
     ok.
