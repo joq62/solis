@@ -96,8 +96,9 @@ ping()->
 %%          {stop, Reason}
 %% --------------------------------------------------------------------
 init([]) ->
-    application:start(conbee),
+%    application:start(conbee),
     lamps:start(),
+    tv:start(),
     
     {ok, #state{}
     }.

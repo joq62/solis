@@ -162,22 +162,22 @@ format_status(_Opt, [_PDict, State, Data]) ->
 %% @end
 %%--------------------------------------------------------------------
 lamps_on(cast,{switch_on,"switch_lamps"},_Data) ->
-    io:format("lamps_on: switch_on ~p~n",[{?MODULE,?LINE}]),
+    
     {keep_state_and_data};
 lamps_on(cast,{switch_off,"switch_lamps" },Data) ->
-    spawn(fun()->tradfri_bulb_E14_ws_candleopal_470lm:turn_off("lamp_hall_strindberg") end),	    
-    spawn(fun()->tradfri_bulb_e27_ww_806lm:turn_off("lamp_livingroom_small_board") end),
-    spawn(fun()->tradfri_bulb_e27_ww_806lm:turn_off("lamp_livingroom_floor") end),  
-    io:format("lamps_on: switch_off ~p~n",[{?MODULE,?LINE}]),
+    [{ConbeeNode,_}]=sd:get(conbee),
+    rpc:cast(ConbeeNode,tradfri_bulb_E14_ws_candleopal_470lm,turn_off,["lamp_hall_strindberg"]),	    
+    rpc:cast(ConbeeNode,tradfri_bulb_e27_ww_806lm,turn_off,["lamp_livingroom_small_board"]),
+    rpc:cast(ConbeeNode,tradfri_bulb_e27_ww_806lm,turn_off,["lamp_livingroom_floor"]),  
     {next_state, lamps_off, Data}.
 lamps_off(cast,{switch_on,"switch_lamps"},Data) ->
-    spawn(fun()->tradfri_bulb_E14_ws_candleopal_470lm:turn_on("lamp_hall_strindberg",78,443) end),	    
-    spawn(fun()->tradfri_bulb_e27_ww_806lm:turn_on("lamp_livingroom_small_board",78) end),
-    spawn(fun()->tradfri_bulb_e27_ww_806lm:turn_on("lamp_livingroom_floor",78) end),
-    io:format("lamps_off: switch_on -> on ~p~n",[{?MODULE,?LINE}]),
+    [{ConbeeNode,_}]=sd:get(conbee),
+    rpc:cast(ConbeeNode,tradfri_bulb_E14_ws_candleopal_470lm,turn_on,["lamp_hall_strindberg",78,443]),	    
+    rpc:cast(ConbeeNode,tradfri_bulb_e27_ww_806lm,turn_on,["lamp_livingroom_small_board",78]),
+    rpc:cast(ConbeeNode,tradfri_bulb_e27_ww_806lm,turn_on,["lamp_livingroom_floor",78]),
     {next_state, lamps_on, Data};
 lamps_off(cast,{switch_off,"switch_lamps" },_Data) ->
-    io:format("lamps_off: switch_off -> off ~p~n",[{?MODULE,?LINE}]),
+    
     {keep_state_and_data}.
 
 state_name({call, Caller}, _Msg, Data) ->
@@ -250,9 +250,10 @@ code_change(_OldVsn, State, Data, _Extra) ->
     {ok, State, Data}.
 
 status()->
-    L1={"lamp_hall_strindberg",tradfri_bulb_E14_ws_candleopal_470lm:is_on("lamp_hall_strindberg")},	    
-    L2={"lamp_livingroom_small_board",tradfri_bulb_e27_ww_806lm:is_on("lamp_livingroom_small_board")},
-    L3={"lamp_livingroom_floor",tradfri_bulb_e27_ww_806lm:is_on("lamp_livingroom_floor")},
+    [{ConbeeNode,_}]=sd:get(conbee),
+    L1={"lamp_hall_strindberg",rpc:call(ConbeeNode,tradfri_bulb_E14_ws_candleopal_470lm,is_on,["lamp_hall_strindberg"],5000)},	    
+    L2={"lamp_livingroom_small_board",rpc:call(ConbeeNode,tradfri_bulb_e27_ww_806lm,is_on,["lamp_livingroom_small_board"],5000)},
+    L3={"lamp_livingroom_floor",rpc:call(ConbeeNode,tradfri_bulb_e27_ww_806lm,is_on,["lamp_livingroom_floor"])},
     [L1,L2,L3].
 
 are_on()->
