@@ -1,5 +1,5 @@
 %%%-------------------------------------------------------------------
-%% @doc solis top level supervisor.
+%% @doc solis_web top level supervisor.
 %% @end
 %%%-------------------------------------------------------------------
 
@@ -29,7 +29,8 @@ init([]) ->
     SupFlags = #{strategy => one_for_all,
                  intensity => 0,
                  period => 1},
-    ChildSpecs = [],
+    ChildSpecs = [#{id=>solis,
+		   start=>{solis,start,[]}}],
     {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions
