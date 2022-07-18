@@ -122,7 +122,8 @@ handle_call({turn_off,"lamps"},_From,State) ->
     {reply, Reply, State};
 
 handle_call({temp,"indoor"},_From,State) ->
-    Reply=lumi_weather:temp("temp_indoor_house"),
+    [{ConbeeNode,_}]=sd:get(conbee),
+    Reply=rpc:call(ConbeeNode,lumi_weather,temp,["temp_indoor_house"],5000),
     {reply, Reply, State};
 
 
